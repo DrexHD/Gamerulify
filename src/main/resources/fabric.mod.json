@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "gamerulify",
+  "version": "${version}",
+  "name": "GameRulify",
+  "description": "A server-side that adds plenty of game rules for on the fly server configuration",
+  "authors": [
+    "Drex"
+  ],
+  "contact": {
+    "sources": "https://github.com/DrexHD/GameRulify"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "server": [
+      "me.drex.gamerulify.GameRulify"
+    ]
+  },
+  "mixins": [
+    "gamerulify.mixins.json"
+  ],
+  "accessWidener": "gamerulify.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "minecraft": ">=1.17",
+    "java": ">=16",
+    "fabric-game-rule-api-v1": ">=1.0.7",
+    "fabric-lifecycle-events-v1": ">=1.0.1"
+  }
+}

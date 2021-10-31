@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.drex.gamerulify.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "CreeperMixin",
+    "DedicatedServerAccessor",
+    "DedicatedServerMixin",
+    "MinecraftServerMixin",
+    "PlayerListMixin",
+    "QueryThreadGs4Mixin",
+    "RconThreadMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
