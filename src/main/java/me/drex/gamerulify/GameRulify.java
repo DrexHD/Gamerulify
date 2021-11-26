@@ -33,9 +33,9 @@ public class GameRulify implements DedicatedServerModInitializer {
     // API
     public static final GameRules.Key<GameRules.BooleanValue> ENABLE_STATUS = register("enableStatus", API_CATEGORY, GameRuleFactory.createBooleanRule(true));
     public static final GameRules.Key<GameRules.BooleanValue> ENABLE_RCON = register("enableRcon", API_CATEGORY, GameRuleFactory.createBooleanRule(false, GameRulify::toggleRcon));
-    public static final GameRules.Key<GameRules.IntegerValue> RCON_PORT = register("rconPort", API_CATEGORY, GameRuleFactory.createIntRule(25565, 0, 65535, (server, ignored) -> restartRconThreadIfRunning(server)));
+    public static final GameRules.Key<GameRules.IntegerValue> RCON_PORT = register("rconPort", API_CATEGORY, GameRuleFactory.createIntRule(25575, 1, 65535, (server, ignored) -> restartRconThreadIfRunning(server)));
     public static final GameRules.Key<StringValue> RCON_PASSWORD = register("rconPassword", API_CATEGORY, StringValue.create("", (server, ignored) -> restartRconThreadIfRunning(server)));
-    public static final GameRules.Key<GameRules.IntegerValue> QUERY_PORT = register("queryPort", API_CATEGORY, GameRuleFactory.createIntRule(25565, 0, 65535, (server, ignored) -> restartQueryThreadIfRunning(server)));
+    public static final GameRules.Key<GameRules.IntegerValue> QUERY_PORT = register("queryPort", API_CATEGORY, GameRuleFactory.createIntRule(25565, 1, 65535, (server, ignored) -> restartQueryThreadIfRunning(server)));
     public static final GameRules.Key<GameRules.BooleanValue> ENABLE_QUERY = register("enableQuery", API_CATEGORY, GameRuleFactory.createBooleanRule(false, GameRulify::toggleQuery));
 
     // Spawning
@@ -55,7 +55,7 @@ public class GameRulify implements DedicatedServerModInitializer {
     public static final GameRules.Key<GameRules.BooleanValue> PREVENT_PROXY_CONNECTIONS = register("preventProxyConnections", ANTI_CHEAT_CATEGORY, GameRuleFactory.createBooleanRule(false));
 
     // Server configuration
-    public static final GameRules.Key<GameRules.IntegerValue> NETWORK_COMPRESSION_TRESHOLD = register("networkCompressionThreshold", SERVER_CATEGORY, GameRuleFactory.createIntRule(256, -1, 65535));
+    public static final GameRules.Key<GameRules.IntegerValue> NETWORK_COMPRESSION_TRESHOLD = register("networkCompressionThreshold", SERVER_CATEGORY, GameRuleFactory.createIntRule(256, -1));
     public static final GameRules.Key<GameRules.IntegerValue> OP_PERMISSION_LEVEL = register("opPermissionLevel", SERVER_CATEGORY, GameRuleFactory.createIntRule(4, 1, 4));
     public static final GameRules.Key<GameRules.IntegerValue> FUNCTION_PERMISSION_LEVEL = register("functionPermissionLevel", SERVER_CATEGORY, GameRuleFactory.createIntRule(2, 1, 4));
     public static final GameRules.Key<GameRules.BooleanValue> ENABLE_COMMAND_BLOCK = register("enableCommandBlock", SERVER_CATEGORY, GameRuleFactory.createBooleanRule(true));

@@ -39,9 +39,14 @@ import java.net.Proxy;
 @Mixin(DedicatedServer.class)
 public abstract class DedicatedServerMixin extends MinecraftServer {
 
-    @Shadow public abstract String getPackHash();
+    @Shadow
+    public abstract String getPackHash();
 
-    @Shadow public abstract DedicatedPlayerList getPlayerList();
+    @Shadow
+    public abstract DedicatedPlayerList getPlayerList();
+
+    @Shadow
+    public abstract DedicatedServerProperties getProperties();
 
     public DedicatedServerMixin(Thread thread, RegistryAccess.RegistryHolder registryHolder, LevelStorageSource.LevelStorageAccess levelStorageAccess, WorldData worldData, PackRepository packRepository, Proxy proxy, DataFixer dataFixer, ServerResources serverResources, @Nullable MinecraftSessionService minecraftSessionService, @Nullable GameProfileRepository gameProfileRepository, @Nullable GameProfileCache gameProfileCache, ChunkProgressListenerFactory chunkProgressListenerFactory) {
         super(thread, registryHolder, levelStorageAccess, worldData, packRepository, proxy, dataFixer, serverResources, minecraftSessionService, gameProfileRepository, gameProfileCache, chunkProgressListenerFactory);
@@ -131,7 +136,12 @@ public abstract class DedicatedServerMixin extends MinecraftServer {
      */
     @Overwrite
     public int getRateLimitPacketsPerSecond() {
-        return this.getGameRules().getInt(GameRulify.RATE_LIMIT);
+        try {
+            return this.getGameRules().getInt(GameRulify.RATE_LIMIT);
+        } catch (NullPointerException e) {
+            // getGameRules() will throw an NPE if the game rules haven't been loaded yet
+            return this.getProperties().rateLimitPacketsPerSecond;
+        }
     }
 
     /**
@@ -270,8 +280,8 @@ public abstract class DedicatedServerMixin extends MinecraftServer {
     }
 
     /**
-    * This {@link Redirect} prevents {@link DedicatedServer#parseResourcePackPrompt} from running to remove any logs caused by invalid server property values.
-    * */
+     * This {@link Redirect} prevents {@link DedicatedServer#parseResourcePackPrompt} from running to remove any logs caused by invalid server property values.
+     */
     @Redirect(
             method = "<init>",
             at = @At(
