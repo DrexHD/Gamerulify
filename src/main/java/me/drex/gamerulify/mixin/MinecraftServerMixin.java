@@ -2,10 +2,15 @@ package me.drex.gamerulify.mixin;
 
 import me.drex.gamerulify.GameRulify;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 /**
  * Notice:
@@ -15,7 +20,14 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
 
-    @Shadow public abstract GameRules getGameRules();
+    @Shadow
+    public abstract ServerLevel overworld();
+
+    @Shadow
+    public abstract GameRules getGameRules();
+
+    @Shadow
+    public abstract boolean usesAuthentication();
 
     /**
      * @author Drex
@@ -42,6 +54,21 @@ public abstract class MinecraftServerMixin {
     @Overwrite
     public boolean getPreventProxyConnections() {
         return this.getGameRules().getBoolean(GameRulify.PREVENT_PROXY_CONNECTIONS);
+    }
+
+    /**
+     * Update onlineMode gamerule in case setUsesAuthentication called outside gamerule change callback.
+     * @author Philip-Nicolas
+     */
+    @Inject(method = "setUsesAuthentication", at = @At("RETURN"))
+    public void onSetUsesAuthentication(CallbackInfo ci) {
+        // ensure level exists before calling getGameRules
+        if (this.overworld() != null) {
+            GameRules.BooleanValue onlineMode = this.getGameRules().getRule(GameRulify.ONLINE_MODE);
+            if (this.usesAuthentication() != onlineMode.get()) {
+                onlineMode.set(this.usesAuthentication(), (MinecraftServer) (Object) this);
+            }
+        }
     }
 
 }
