@@ -12,6 +12,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.players.GameProfileCache;
 import net.minecraft.server.rcon.thread.QueryThreadGs4;
 import net.minecraft.server.rcon.thread.RconThread;
 import net.minecraft.world.level.GameRules;
@@ -70,6 +71,7 @@ public class GameRulify implements DedicatedServerModInitializer {
     public static final GameRules.Key<StringValue> MOTD = register("motd", SERVER_CATEGORY, StringValue.create("A Minecraft Server", GameRulify::updateMotd));
     public static final GameRules.Key<GameRules.IntegerValue> VIEW_DISTANCE = register("viewDistance", SERVER_CATEGORY, GameRuleFactory.createIntRule(10, 2, 32, GameRulify::setViewDistance));
     public static final GameRules.Key<GameRules.BooleanValue> CREEPER_GRIEFING = register("creeperGriefing", SERVER_CATEGORY, GameRuleFactory.createBooleanRule(true));
+    public static final GameRules.Key<GameRules.BooleanValue> ONLINE_MODE = register("onlineMode", SERVER_CATEGORY, GameRuleFactory.createBooleanRule(true, GameRulify::setUsesAuthentication));
 
     private static <T extends GameRules.Value<T>> GameRules.Key<T> register(String name, CustomGameRuleCategory category, GameRules.Type<T> type) {
         return GameRuleRegistry.register(name, category, type);
@@ -154,6 +156,11 @@ public class GameRulify implements DedicatedServerModInitializer {
     private static void setViewDistance(MinecraftServer server, GameRules.IntegerValue gameRule) {
         final int viewDistance = gameRule.get();
         server.getPlayerList().setViewDistance(viewDistance);
+    }
+
+    private static void setUsesAuthentication(MinecraftServer minecraftServer, GameRules.BooleanValue gameRule) {
+        minecraftServer.setUsesAuthentication(gameRule.get());
+        GameProfileCache.setUsesAuthentication(gameRule.get());
     }
 
 }
